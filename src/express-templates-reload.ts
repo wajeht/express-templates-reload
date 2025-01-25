@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import type { Application, NextFunction, Response, Request } from 'express';
 
-export function reload({
+export function expressTempaltesReload({
   app,
   watch,
   options = {},
@@ -52,12 +52,12 @@ export function reload({
           if (content !== lastContents.get(fullPath)) {
             lastContents.set(fullPath, content);
 
-            if (!quiet) console.info('[reload]: File changed: %s', filename);
+            if (!quiet) console.info('[expressTempaltesReload]: File changed: %s', filename);
             changeDetected = true;
           }
         } catch {
           if (!quiet)
-            console.error('[reload]: Error reading file: %s', filename);
+            console.error('[expressTempaltesReload]: Error reading file: %s', filename);
         }
       },
     );
