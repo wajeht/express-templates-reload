@@ -11,7 +11,7 @@ export function expressTemplatesReload({
   watch: { path: string; extensions?: string[] }[];
   options?: { pollInterval?: number; quiet?: boolean };
 }): void {
-  if (process.env.NODE_ENV === 'development') return;
+  if (process.env.NODE_ENV === 'production') return;
 
   const pollInterval = options.pollInterval || 50;
   const quiet = options.quiet || false;
