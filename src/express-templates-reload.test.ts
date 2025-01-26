@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 describe('expressTemplatesReload', () => {
-  test('example test', () => {
+  test('example', () => {
     expect(true).toBeTruthy();
   });
 });
