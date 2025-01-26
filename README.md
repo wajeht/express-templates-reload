@@ -1,8 +1,8 @@
-# express-templates-reload
+# 🔄 express-templates-reload
 
 Automatically reload templates and asset changes in an Express app
 
-## Features
+## 📚 Features
 
 - 🔄 Auto-reload on template changes
 - 📁 Watch single files or entire directories
@@ -16,6 +16,7 @@ Automatically reload templates and asset changes in an Express app
 ```ts
 import express from 'express';
 import { expressTemplatesReload } from 'express-templates-reload';
+
 const app = express();
 
 // Basic setup
@@ -43,7 +44,7 @@ expressTemplatesReload({
 });
 ```
 
-## API Reference
+## 🛠️ API Reference
 
 ### expressTemplatesReload(config)
 
@@ -58,29 +59,24 @@ expressTemplatesReload({
 | `options.pollInterval` | `number`      | Polling interval in milliseconds (default: 50)      |
 | `options.quiet`        | `boolean`     | Suppress console logs (default: false)              |
 
-## How It Works
+## ⚙️ How It Works
 
 1. Watches specified files and directories for changes
 2. Injects a small client-side script into your HTML pages
 3. Uses a polling mechanism to detect changes
 4. Automatically reloads the page when changes are detected
 
-## Notes
+## 📝 Notes
 
 - The package only runs in development mode (`NODE_ENV !== 'development'`)
 - When watching directories, you must specify file extensions
 - The client script is automatically injected before the closing `</head>` tag
 
+## 📑 Docs
 
-## Contributing
+- See [DEVELOPMENT](./docs/development.md) for `development` guide.
+- See [CONTRIBUTION](./docs/contribution.md) for `contribution` guide.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## 📜 License
 
-
-## License
-
-MIT © [wajeht](https://github.com/wajeht)
+Distributed under the MIT License © [wajeht](https://github.com/wajeht). See [LICENSE](./LICENSE) for more information.
