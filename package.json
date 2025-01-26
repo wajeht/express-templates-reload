@@ -22,6 +22,13 @@
   ],
   "type": "module",
   "main": "dist/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
