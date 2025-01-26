@@ -11,7 +11,7 @@ Automatically reload templates and asset changes in an Express app
 - 🔧 Configurable polling interval
 - 🤫 Quiet mode option
 
-## Usage
+## 💻 Usage
 
 ```ts
 import express from 'express';
