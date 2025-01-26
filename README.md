@@ -12,7 +12,7 @@ $ npm install @wajeht/express-templates-reload --save-dev
 
 ```ts
 import express from 'express';
-import { expressTemplatesReload } from 'express-templates-reload';
+import { expressTemplatesReload } from '@wajeht/express-templates-reload';
 
 const app = express();
 
