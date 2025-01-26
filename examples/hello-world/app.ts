@@ -1,16 +1,10 @@
-import ejs from 'ejs';
 import express from 'express';
+import path from 'node:path';
 import { expressTemplatesReload } from '../../src/express-templates-reload.js';
 
 const app = express();
 
 app.use(express.static('./public'));
-
-app.engine('html', ejs.renderFile);
-
-app.set('view engine', 'html');
-
-app.set('views', './views');
 
 expressTemplatesReload({
   app,
@@ -28,7 +22,7 @@ expressTemplatesReload({
 });
 
 app.get('/', (req: express.Request, res: express.Response) => {
-  return res.render('hello-world.html');
+  return res.sendFile(path.join(process.cwd(), 'views', 'hello-world.html'));
 });
 
 app.listen(80, () => {
