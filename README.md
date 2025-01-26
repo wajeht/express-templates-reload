@@ -1,5 +1,10 @@
 # 🔄 express-templates-reload
 
+[![Node.js CI](https://github.com/wajeht/express-templates-reload/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wajeht/express-templates-reload/actions/workflows/ci.yml)
+![npm](https://img.shields.io/npm/dw/%40wajeht%2Fexpress-templates-reload)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/wajeht/type/blob/main/LICENSE) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/wajeht/express-templates-reload)
+[![npm](https://img.shields.io/npm/v/%40wajeht%2Fexpress-templates-reload)](https://www.npmjs.com/package/@wajeht/express-templates-reload)
+
 Automatically reload templates and asset changes in an Express app
 
 ## 🛠️ Installation
