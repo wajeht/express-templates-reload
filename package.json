@@ -35,6 +35,7 @@
     "lint": "tsc",
     "test": "vitest run",
     "format": "prettier --write .",
+    "prepublishOnly": "npm run ci",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack .",
     "local-release": "npm run ci && changeset version && changeset publish"
