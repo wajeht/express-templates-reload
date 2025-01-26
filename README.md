@@ -11,7 +11,7 @@ Automatically reload templates and asset changes in an Express app
 - 🔧 Configurable polling interval
 - 🤫 Quiet mode option
 
-## usage
+## Usage
 
 ```ts
 import express from 'express';
@@ -71,9 +71,6 @@ expressTemplatesReload({
 - When watching directories, you must specify file extensions
 - The client script is automatically injected before the closing `</head>` tag
 
-## License
-
-MIT © [wajeht](https://github.com/wajeht)
 
 ## Contributing
 
@@ -83,4 +80,7 @@ MIT © [wajeht](https://github.com/wajeht)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Usage
+
+## License
+
+MIT © [wajeht](https://github.com/wajeht)
