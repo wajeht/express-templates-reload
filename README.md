@@ -24,7 +24,9 @@ expressTemplatesReload({
   app,
   watch: [
     // Watch a specific file
-    { path: './views/index.ejs' },
+    { path: './public/style.css' },
+    { path: './public/script.js' },
+
     // Watch a directory with specific extensions
     {
       path: './views',
