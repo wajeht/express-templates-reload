@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import type { Application, NextFunction, Response, Request } from 'express';
 
-export function expressTempaltesReload({
+export function expressTemplatesReload({
   app,
   watch,
   options = {},
