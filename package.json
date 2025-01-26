@@ -1,5 +1,5 @@
 {
-  "name": "express-templates-reload",
+  "name": "@wajeht/express-templates-reload",
   "version": "1.0.0",
   "description": "Automatically reload templates and asset changes in an Express app.",
   "keywords": [

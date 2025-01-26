@@ -5,7 +5,7 @@ Automatically reload templates and asset changes in an Express app
 ## 🛠️ Installation
 
 ```bash
-$ npm install express-templates-reload --save-dev
+$ npm install @wajeht/express-templates-reload --save-dev
 ```
 
 ## 💻 Usage
