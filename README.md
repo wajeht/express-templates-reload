@@ -2,15 +2,6 @@
 
 Automatically reload templates and asset changes in an Express app
 
-## 📚 Features
-
-- 🔄 Auto-reload on template changes
-- 📁 Watch single files or entire directories
-- 🎯 Filter by file extensions
-- ⚡ Lightweight with zero dependencies
-- 🔧 Configurable polling interval
-- 🤫 Quiet mode option
-
 ## 💻 Usage
 
 ```ts
