@@ -17,5 +17,6 @@
     "module": "NodeNext",
     "lib": ["es2022"],
     "noEmit": true
-  }
+  },
+  "exclude": ["./examples"]
 }
