@@ -52,12 +52,19 @@ export function expressTempaltesReload({
           if (content !== lastContents.get(fullPath)) {
             lastContents.set(fullPath, content);
 
-            if (!quiet) console.info('[expressTempaltesReload]: File changed: %s', filename);
+            if (!quiet)
+              console.info(
+                '[expressTempaltesReload]: File changed: %s',
+                filename,
+              );
             changeDetected = true;
           }
         } catch {
           if (!quiet)
-            console.error('[expressTempaltesReload]: Error reading file: %s', filename);
+            console.error(
+              '[expressTempaltesReload]: Error reading file: %s',
+              filename,
+            );
         }
       },
     );
