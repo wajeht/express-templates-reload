@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/wajeht/type/blob/main/LICENSE) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/wajeht/express-templates-reload)
 [![npm](https://img.shields.io/npm/v/%40wajeht%2Fexpress-templates-reload)](https://www.npmjs.com/package/@wajeht/express-templates-reload)
 
-automatically reload template and public asset changes in an express app
+automatically reload the browser for template and public asset changes in an express app
 
 ## 🛠️ Installation
 
@@ -21,7 +21,7 @@ import { expressTemplatesReload } from '@wajeht/express-templates-reload';
 
 const app = express();
 
-// Basic setup
+// Must be placed before any other routes
 expressTemplatesReload({
   app,
   watch: [
@@ -35,17 +35,17 @@ expressTemplatesReload({
       extensions: ['.ejs', '.html'],
     },
   ],
-});
 
-// With options
-expressTemplatesReload({
-  app,
-  watch: [{ path: './views', extensions: ['.ejs'] }],
+  // Optional
   options: {
     pollInterval: 100, // Check for changes every 100ms (default: 50ms)
     quiet: true, // Suppress console logs
   },
 });
+
+app.get('/', (req, res) => res.send('Hello, world!'));
+
+app.listen(80, () => console.log('App is listening on http://localhost'));
 ```
 
 ## 🛠️ API Reference

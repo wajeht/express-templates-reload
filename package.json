@@ -1,7 +1,7 @@
 {
   "name": "@wajeht/express-templates-reload",
   "version": "1.0.2",
-  "description": "automatically reload template and public asset changes in an express app",
+  "description": "automatically reload the browser for template and public asset changes in an express app",
   "keywords": [
     "express",
     "templates",

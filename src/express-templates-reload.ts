@@ -2,6 +2,19 @@ import path from 'node:path';
 import fs from 'node:fs';
 import type { Application, NextFunction, Response, Request } from 'express';
 
+/**
+ * Enables automatic browser reload for template and public asset changes in an Express app.
+ *
+ * @param {Object} config - Configuration options.
+ * @param {Application} config.app - The Express app instance.
+ * @param {Array<Object>} config.watch - An array of files or directories to watch for changes.
+ * @param {string} config.watch[].path - Path to the file or directory to watch.
+ * @param {Array<string>} [config.watch[].extensions] - Extensions to monitor for changes when watching a directory.
+ * @param {Object} [config.options] - Optional configuration for the watcher.
+ * @param {number} [config.options.pollInterval=50] - Interval in milliseconds to poll for file changes.
+ * @param {boolean} [config.options.quiet=false] - Suppress logs if set to true.
+ * @returns {void}
+ */
 export function expressTemplatesReload({
   app,
   watch,
