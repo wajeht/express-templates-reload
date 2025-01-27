@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 1.0.3
+
+### Patch Changes
+
+- 816a58c: docs: update types defination
+
 ## 1.0.2
 
 ### Patch Changes
