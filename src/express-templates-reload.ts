@@ -88,22 +88,37 @@ export function expressTemplatesReload({
       if (changeDetected) {
         changeDetected = false;
         clearInterval(timer);
-        res.send();
+        res.send('reload');
       }
     }, pollInterval);
 
-    req.on('close', () => clearInterval(timer));
+    // Add a connection timeout to prevent hanging connections
+    const timeout = setTimeout(() => {
+      clearInterval(timer);
+      res.status(204).end();
+    }, 30000); // 30 second timeout
+
+    req.on('close', () => {
+      clearInterval(timer);
+      clearTimeout(timeout);
+    });
   });
 
   const clientScript = `
 	<script>
-		(async function poll() {
-			try {
-				await fetch('/express-templates-reload');
-				location.reload();
-			} catch {
-				location.reload();
+		(function() {
+			async function poll() {
+				try {
+					const response = await fetch('/express-templates-reload');
+					if (response.ok && response.status !== 204) {
+						location.reload();
+					}
+				} catch (err) {
+					console.log('[express-templates-reload] Connection error, reconnecting...');
+				}
+				setTimeout(poll, 1000);
 			}
+			poll();
 		})();
 	</script>\n\t`;
 
