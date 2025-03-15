@@ -1,5 +1,6 @@
-import express from 'express';
+import fs from 'node:fs';
 import path from 'node:path';
+import express from 'express';
 import { expressTemplatesReload } from '../../src/express-templates-reload.js';
 
 const app = express();
@@ -24,7 +25,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.get('/', (req: express.Request, res: express.Response) => {
-  return res.sendFile(path.join(process.cwd(), 'views', 'hello-world.html'));
+  res.send(
+    fs.readFileSync(
+      path.join(process.cwd(), 'views', 'hello-world.html'),
+      'utf8',
+    ),
+  );
 });
 
 app.listen(80, () => {

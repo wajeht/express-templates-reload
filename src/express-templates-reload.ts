@@ -67,7 +67,7 @@ export function expressTemplatesReload({
 
             if (!quiet)
               console.info(
-                '[expressTempaltesReload]: File changed: %s',
+                '[expressTemplatesReload]: File changed: %s',
                 filename,
               );
             changeDetected = true;
@@ -75,7 +75,7 @@ export function expressTemplatesReload({
         } catch {
           if (!quiet)
             console.error(
-              '[expressTempaltesReload]: Error reading file: %s',
+              '[expressTemplatesReload]: Error reading file: %s',
               filename,
             );
         }
