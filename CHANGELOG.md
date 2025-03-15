@@ -1,5 +1,12 @@
 # @wajeht/express-templates-reload
 
+## 1.0.4
+
+### Patch Changes
+
+- c430d3e: fix: long hanging connection
+  fix: exmaple code was not running properly
+
 ## 1.0.3
 
 ### Patch Changes
