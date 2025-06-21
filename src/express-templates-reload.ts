@@ -1,5 +1,5 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import type { Application, NextFunction, Response, Request } from 'express';
 
 /**
@@ -106,8 +106,7 @@ export function expressTemplatesReload({
     });
   });
 
-  // Function to notify all clients
-  const notifyClients = () => {
+  function notifyClients() {
     sseClients.forEach((client) => {
       try {
         client.write('data: reload\n\n');
@@ -115,7 +114,7 @@ export function expressTemplatesReload({
         sseClients.delete(client);
       }
     });
-  };
+  }
 
   const clientScript = `
 	<script>

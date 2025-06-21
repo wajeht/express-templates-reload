@@ -1,7 +1,7 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { expressTemplatesReload } from './express-templates-reload.js';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 describe('expressTemplatesReload', () => {
   let app: express.Application;
@@ -78,7 +78,7 @@ describe('expressTemplatesReload', () => {
 
     expressTemplatesReload({ app, watch: [{ path: './test.txt' }] });
 
-    app.get('/test', (req, res) => {
+    app.get('/test', (_req, res) => {
       res.send('<html><head></head><body>Test</body></html>');
     });
 
@@ -103,7 +103,7 @@ describe('expressTemplatesReload', () => {
 
     expressTemplatesReload({ app, watch: [{ path: './test.txt' }] });
 
-    app.get('/api', (req, res) => {
+    app.get('/api', (_req, res) => {
       res.json({ message: 'API response' });
     });
 
