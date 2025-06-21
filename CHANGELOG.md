@@ -4,7 +4,43 @@
 
 ### Major Changes
 
-- 91060dd: use SSE for instant relaods
+- **BREAKING**: Removed `pollInterval` option - now uses Server-Sent Events for instant reloads
+- **BREAKING**: Removed `debounceMs` option - no longer needed with new architecture
+- **BREAKING**: `/express-templates-reload` endpoint now serves SSE stream instead of HTTP polling
+
+### Features
+
+- ✨ **Server-Sent Events**: Instant push notifications instead of polling
+- ⚡ **Stream-based file watching**: Uses `fs.promises.watch()` with async iterators for better performance
+- 🔄 **Auto-reconnection**: Client automatically reconnects if connection is lost
+- 🐳 **Better Docker support**: More efficient in containerized environments
+- 📈 **Performance improvements**: Eliminated polling overhead, reduced CPU usage, faster reload times
+
+### Migration Guide
+
+If you were using the removed options:
+
+```js
+// Before (v1.x)
+expressTemplatesReload({
+  app,
+  watch: [...],
+  options: {
+    pollInterval: 100,  // ❌ Remove this
+    debounceMs: 150,    // ❌ Remove this
+    quiet: false
+  }
+});
+
+// After (v2.x)
+expressTemplatesReload({
+  app,
+  watch: [...],
+  options: {
+    quiet: false  // ✅ Only this option remains
+  }
+});
+```
 
 ## 1.0.4
 
