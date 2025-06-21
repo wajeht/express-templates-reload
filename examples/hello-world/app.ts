@@ -8,6 +8,7 @@ const app = express();
 app.use(express.static('./public'));
 
 if (process.env.NODE_ENV !== 'production') {
+  // Uses Server-Sent Events (SSE) for instant reloads - no polling!
   expressTemplatesReload({
     app,
     watch: [
@@ -21,6 +22,11 @@ if (process.env.NODE_ENV !== 'production') {
         extensions: ['.html'],
       },
     ],
+
+    // Optional settings
+    options: {
+      quiet: false, // Set to true to suppress logs
+    },
   });
 }
 

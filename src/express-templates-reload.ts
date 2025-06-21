@@ -11,8 +11,9 @@ import type { Application, NextFunction, Response, Request } from 'express';
  * @param {string} config.watch[].path - Path to the file or directory to watch.
  * @param {Array<string>} [config.watch[].extensions] - Extensions to monitor for changes when watching a directory.
  * @param {Object} [config.options] - Optional configuration for the watcher.
- * @param {number} [config.options.pollInterval=50] - Interval in milliseconds to poll for file changes.
+
  * @param {boolean} [config.options.quiet=false] - Suppress logs if set to true.
+
  * @returns {void}
  */
 export function expressTemplatesReload({
@@ -22,16 +23,13 @@ export function expressTemplatesReload({
 }: {
   app: Application;
   watch: { path: string; extensions?: string[] }[];
-  options?: { pollInterval?: number; quiet?: boolean };
+  options?: { quiet?: boolean };
 }): void {
   if (process.env.NODE_ENV === 'production') return;
 
-  const pollInterval = options.pollInterval || 50;
   const quiet = options.quiet || false;
-  let changeDetected = false;
-  const lastContents = new Map<string, string>();
 
-  watch.forEach(({ path: watchPath, extensions }) => {
+  watch.forEach(async ({ path: watchPath, extensions }) => {
     const isDirectory = fs.statSync(watchPath).isDirectory();
 
     if (isDirectory && !extensions) {
@@ -40,85 +38,104 @@ export function expressTemplatesReload({
       );
     }
 
-    fs.watch(
-      watchPath,
-      { recursive: isDirectory },
-      (_: fs.WatchEventType, filename: string | null) => {
-        if (!filename) return;
+    try {
+      const watcher = fs.promises.watch(watchPath, { recursive: isDirectory });
+
+      for await (const event of watcher) {
+        if (!event.filename) continue;
 
         const fullPath = isDirectory
-          ? path.join(watchPath, filename)
+          ? path.join(watchPath, event.filename)
           : watchPath;
 
         // Only check extensions for directories
         if (
           isDirectory &&
           extensions &&
-          !extensions.some((ext) => filename.endsWith(ext))
+          !extensions.some((ext) => event.filename!.endsWith(ext))
         ) {
-          return;
+          continue;
         }
 
         try {
-          const content = fs.readFileSync(fullPath, 'utf8');
+          // Check if file exists (it might be deleted)
+          await fs.promises.access(fullPath);
 
-          if (content !== lastContents.get(fullPath)) {
-            lastContents.set(fullPath, content);
-
-            if (!quiet)
-              console.info(
-                '[expressTemplatesReload]: File changed: %s',
-                filename,
-              );
-            changeDetected = true;
-          }
-        } catch {
           if (!quiet)
-            console.error(
-              '[expressTemplatesReload]: Error reading file: %s',
-              filename,
+            console.info(
+              '[expressTemplatesReload]: File changed: %s',
+              event.filename,
             );
+          notifyClients();
+        } catch {
+          // File might be deleted or temporarily unavailable
+          if (!quiet)
+            console.info(
+              '[expressTemplatesReload]: File deleted: %s',
+              event.filename,
+            );
+          notifyClients();
         }
-      },
-    );
+      }
+    } catch (error) {
+      if (!quiet)
+        console.error(
+          '[expressTemplatesReload]: Error watching path: %s',
+          watchPath,
+        );
+    }
   });
+
+  const sseClients = new Set<Response>();
 
   app.get('/express-templates-reload', (req: Request, res: Response) => {
-    const timer = setInterval(() => {
-      if (changeDetected) {
-        changeDetected = false;
-        clearInterval(timer);
-        res.send('reload');
-      }
-    }, pollInterval);
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    });
 
-    // Add a connection timeout to prevent hanging connections
-    const timeout = setTimeout(() => {
-      clearInterval(timer);
-      res.status(204).end();
-    }, 30000); // 30 second timeout
+    // Send initial connection event
+    res.write('data: connected\n\n');
+
+    sseClients.add(res);
 
     req.on('close', () => {
-      clearInterval(timer);
-      clearTimeout(timeout);
+      sseClients.delete(res);
     });
   });
+
+  // Function to notify all clients
+  const notifyClients = () => {
+    sseClients.forEach((client) => {
+      try {
+        client.write('data: reload\n\n');
+      } catch {
+        sseClients.delete(client);
+      }
+    });
+  };
 
   const clientScript = `
 	<script>
 		(function() {
-			async function poll() {
-				try {
-					const response = await fetch('/express-templates-reload');
-					if (response.ok && response.status !== 204) {
+			function connect() {
+				const eventSource = new EventSource('/express-templates-reload');
+
+				eventSource.onmessage = function(event) {
+					if (event.data === 'reload') {
 						location.reload();
 					}
-				} catch (err) {
-					console.log('[express-templates-reload] Connection error, reconnecting...');
-				}
-				setTimeout(poll, 1000);
+				};
+
+				eventSource.onerror = function() {
+					console.log('[express-templates-reload] Connection lost, reconnecting...');
+					eventSource.close();
+					setTimeout(connect, 1000);
+				};
 			}
-			poll();
+			connect();
 		})();
 	</script>\n\t`;
 

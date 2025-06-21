@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/wajeht/type/blob/main/LICENSE) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/wajeht/express-templates-reload)
 [![npm](https://img.shields.io/npm/v/%40wajeht%2Fexpress-templates-reload)](https://www.npmjs.com/package/@wajeht/express-templates-reload)
 
-automatically reload the browser for template and public asset changes in an express app
+automatically reload the browser for template and public asset changes in an express app using **Server-Sent Events** and **Node.js streams** for instant, efficient reloads
 
 ## 🛠️ Installation
 
@@ -38,7 +38,6 @@ expressTemplatesReload({
 
   // Optional
   options: {
-    pollInterval: 100, // Check for changes every 100ms (default: 50ms)
     quiet: true, // Suppress console logs
   },
 });
@@ -54,14 +53,13 @@ app.listen(80, () => console.log('App is listening on http://localhost'));
 
 #### Config Options
 
-| Parameter              | Type          | Description                                         |
-| ---------------------- | ------------- | --------------------------------------------------- |
-| `app`                  | `Application` | Express application instance                        |
-| `watch`                | `Array`       | Array of paths to watch                             |
-| `watch[].path`         | `string`      | File or directory path to watch                     |
-| `watch[].extensions`   | `string[]`    | File extensions to watch (required for directories) |
-| `options.pollInterval` | `number`      | Polling interval in milliseconds (default: 50)      |
-| `options.quiet`        | `boolean`     | Suppress console logs (default: false)              |
+| Parameter            | Type          | Description                                         |
+| -------------------- | ------------- | --------------------------------------------------- |
+| `app`                | `Application` | Express application instance                        |
+| `watch`              | `Array`       | Array of paths to watch                             |
+| `watch[].path`       | `string`      | File or directory path to watch                     |
+| `watch[].extensions` | `string[]`    | File extensions to watch (required for directories) |
+| `options.quiet`      | `boolean`     | Suppress console logs (default: false)              |
 
 ## 📑 Docs
 
