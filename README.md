@@ -63,14 +63,6 @@ app.listen(80, () => console.log('App is listening on http://localhost'));
 | `options.pollInterval` | `number`      | Polling interval in milliseconds (default: 50)      |
 | `options.quiet`        | `boolean`     | Suppress console logs (default: false)              |
 
-## ⚠️ Important Notes
-
-- **Only runs in development**: The package automatically exits if `NODE_ENV === 'production'`
-- **Route conflict warning**: Creates a `/express-templates-reload` endpoint - ensure this doesn't conflict with your existing routes
-- **Connection management**: Polling connections timeout after 30 seconds to prevent hanging connections
-- **Directory watching**: When watching directories, you must specify file extensions
-- **Script injection**: Client script is automatically injected before the closing `</head>` tag
-
 ## 📑 Docs
 
 - See [DEVELOPMENT](./docs/development.md) for `development` guide.
