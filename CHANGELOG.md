@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 2.0.0
+
+### Major Changes
+
+- 91060dd: use SSE for instant relaods
+
 ## 1.0.4
 
 ### Patch Changes
