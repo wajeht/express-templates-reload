@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-app.get('/', (req: express.Request, res: express.Response) => {
+app.get('/', (_req: express.Request, res: express.Response) => {
   res.send(
     fs.readFileSync(
       path.join(process.cwd(), 'views', 'hello-world.html'),
