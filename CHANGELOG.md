@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 2.0.1
+
+### Patch Changes
+
+- 917133b: feat: add color console output
+
 ## 2.0.0
 
 ### Major Changes
