@@ -111,9 +111,8 @@ const logger = {
  * @param {string} config.watch[].path - Path to the file or directory to watch.
  * @param {Array<string>} [config.watch[].extensions] - Extensions to monitor for changes when watching a directory.
  * @param {Object} [config.options] - Optional configuration for the watcher.
-
  * @param {boolean} [config.options.quiet=false] - Suppress logs if set to true.
-
+ *
  * @returns {void}
  */
 export function expressTemplatesReload({
