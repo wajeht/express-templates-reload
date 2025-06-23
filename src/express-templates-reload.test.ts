@@ -134,7 +134,7 @@ describe('expressTemplatesReload', () => {
 
     expect(caughtError).toBeInstanceOf(Error);
     expect(caughtError.message).toBe(
-      'Extensions must be provided for directory: ./views',
+      '[expressTemplatesReload]: Extensions must be provided for directory: ./views',
     );
 
     process.removeAllListeners('unhandledRejection');
@@ -192,5 +192,46 @@ describe('expressTemplatesReload', () => {
 
     mockStatSync.mockRestore();
     mockWatch.mockRestore();
+  });
+
+  it('should log with colored output and timestamps', async () => {
+    const mockStatSync = vi.spyOn(require('fs'), 'statSync');
+    const mockWatch = vi.spyOn(require('fs').promises, 'watch');
+    const mockAccess = vi.spyOn(require('fs').promises, 'access');
+    const consoleInfoSpy = vi.spyOn(console, 'info');
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+
+    mockStatSync.mockReturnValue({ isDirectory: () => false });
+    mockAccess.mockResolvedValue(undefined);
+
+    mockWatch.mockReturnValue({
+      [Symbol.asyncIterator]: async function* () {
+        yield { filename: 'test.txt' };
+      },
+    });
+
+    expressTemplatesReload({ app, watch: [{ path: './test.txt' }] });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(consoleInfoSpy).toHaveBeenCalled();
+    expect(consoleInfoSpy.mock.calls.length).toBeGreaterThan(0);
+
+    const logCall = consoleInfoSpy.mock.calls[0];
+    if (logCall && logCall.length > 0) {
+      const logMessage = logCall[0] as string;
+
+      expect(logMessage).toContain('[expressTemplatesReload]');
+      expect(logMessage).toContain('File changed: %s');
+      expect(logMessage).toMatch(/\d{1,2}:\d{2}:\d{2}/); // timestamp pattern
+      expect(logMessage).toContain('\x1b['); // ANSI color codes
+
+      // Verify the filename parameter was passed correctly
+      expect(logCall[1]).toBe('test.txt');
+    }
+
+    mockStatSync.mockRestore();
+    mockWatch.mockRestore();
+    mockAccess.mockRestore();
   });
 });
