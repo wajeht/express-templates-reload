@@ -3,6 +3,106 @@ import path from 'node:path';
 import type { Application, NextFunction, Response, Request } from 'express';
 
 /**
+ *
+ * ANSI color codes for terminal output
+ *
+ */
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+} as const;
+
+/**
+ *
+ * Colored logger object for better console output visibility
+ *
+ * @type {Object}
+ * @property {Function} info - Log an info message
+ * @property {Function} warn - Log a warning message
+ * @property {Function} error - Log an error message
+ * @property {Function} success - Log a success message
+ *
+ * @returns {void}
+ */
+const logger = {
+  /**
+   *
+   * Log an info message
+   *
+   * @param {string} message - The message to log
+   * @param {any} data - Optional data to include in the log
+   *
+   * @returns {void}
+   */
+  info: (message: string, data?: any): void => {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.cyan}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    data !== undefined
+      ? console.info(`${prefix}: ${message}`, data)
+      : console.info(`${prefix}: ${message}`);
+  },
+
+  /**
+   *
+   * Log a warning message
+   *
+   * @param {string} message - The message to log
+   * @param {any} data - Optional data to include in the log
+   *
+   * @returns {void}
+   */
+  warn: (message: string, data?: any): void => {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.yellow}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    data !== undefined
+      ? console.warn(`${prefix}: ${message}`, data)
+      : console.warn(`${prefix}: ${message}`);
+  },
+
+  /**
+   *
+   * Log an error message
+   *
+   * @param {string} message - The message to log
+   * @param {any} data - Optional data to include in the log
+   *
+   * @returns {void}
+   */
+  error: (message: string, data?: any): void => {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.red}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    data !== undefined
+      ? console.error(`${prefix}: ${message}`, data)
+      : console.error(`${prefix}: ${message}`);
+  },
+
+  /**
+   *
+   * Log a success message
+   *
+   * @param {string} message - The message to log
+   * @param {any} data - Optional data to include in the log
+   *
+   * @returns {void}
+   */
+  success: (message: string, data?: any): void => {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.green}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    data !== undefined
+      ? console.log(`${prefix}: ${message}`, data)
+      : console.log(`${prefix}: ${message}`);
+  },
+};
+
+/**
  * Enables automatic browser reload for template and public asset changes in an Express app.
  *
  * @param {Object} config - Configuration options.
@@ -34,7 +134,7 @@ export function expressTemplatesReload({
 
     if (isDirectory && !extensions) {
       throw new Error(
-        `Extensions must be provided for directory: ${watchPath}`,
+        `[expressTemplatesReload]: Extensions must be provided for directory: ${watchPath}`,
       );
     }
 
@@ -61,28 +161,16 @@ export function expressTemplatesReload({
           // Check if file exists (it might be deleted)
           await fs.promises.access(fullPath);
 
-          if (!quiet)
-            console.info(
-              '[expressTemplatesReload]: File changed: %s',
-              event.filename,
-            );
+          if (!quiet) logger.info('File changed: %s', event.filename);
           notifyClients();
         } catch {
           // File might be deleted or temporarily unavailable
-          if (!quiet)
-            console.info(
-              '[expressTemplatesReload]: File deleted: %s',
-              event.filename,
-            );
+          if (!quiet) logger.info('File deleted: %s', event.filename);
           notifyClients();
         }
       }
     } catch (error) {
-      if (!quiet)
-        console.error(
-          '[expressTemplatesReload]: Error watching path: %s',
-          watchPath,
-        );
+      if (!quiet) logger.error('Error watching path: %s', watchPath);
     }
   });
 
