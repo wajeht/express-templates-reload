@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 2.0.2
+
+### Patch Changes
+
+- 15602a9: perf: Improved file watching with `fs.watch`, added reconnection limits, and enhanced error handling
+
 ## 2.0.1
 
 ### Patch Changes
