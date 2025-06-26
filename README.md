@@ -22,25 +22,27 @@ import { expressTemplatesReload } from '@wajeht/express-templates-reload';
 const app = express();
 
 // Must be placed before any other routes
-expressTemplatesReload({
-  app,
-  watch: [
-    // Watch a specific file
-    { path: './public/style.css' },
-    { path: './public/script.js' },
+if (process.env.NODE_ENV !== 'production')
+  expressTemplatesReload({
+    app,
+    watch: [
+      // Watch a specific file
+      { path: './public/style.css' },
+      { path: './public/script.js' },
 
-    // Watch a directory with specific extensions
-    {
-      path: './views',
-      extensions: ['.ejs', '.html'],
+      // Watch a directory with specific extensions
+      {
+        path: './views',
+        extensions: ['.ejs', '.html'],
+      },
+    ],
+
+    // Optional
+    options: {
+      quiet: true, // Suppress console logs
     },
-  ],
-
-  // Optional
-  options: {
-    quiet: true, // Suppress console logs
-  },
-});
+  });
+}
 
 app.get('/', (req, res) => res.send('Hello, world!'));
 
