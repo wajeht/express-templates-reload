@@ -46,8 +46,8 @@ const logger = {
     const timestamp = new Date().toLocaleTimeString();
     const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.cyan}${colors.bright}[expressTemplatesReload]${colors.reset}`;
     data !== undefined
-      ? console.info(`${prefix}: ${message}`, data)
-      : console.info(`${prefix}: ${message}`);
+      ? console.info(`${prefix} ${message}`, data)
+      : console.info(`${prefix} ${message}`);
   },
 
   /**
@@ -63,8 +63,8 @@ const logger = {
     const timestamp = new Date().toLocaleTimeString();
     const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.yellow}${colors.bright}[expressTemplatesReload]${colors.reset}`;
     data !== undefined
-      ? console.warn(`${prefix}: ${message}`, data)
-      : console.warn(`${prefix}: ${message}`);
+      ? console.warn(`${prefix} ${message}`, data)
+      : console.warn(`${prefix} ${message}`);
   },
 
   /**
@@ -80,8 +80,8 @@ const logger = {
     const timestamp = new Date().toLocaleTimeString();
     const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.red}${colors.bright}[expressTemplatesReload]${colors.reset}`;
     data !== undefined
-      ? console.error(`${prefix}: ${message}`, data)
-      : console.error(`${prefix}: ${message}`);
+      ? console.error(`${prefix} ${message}`, data)
+      : console.error(`${prefix} ${message}`);
   },
 
   /**
@@ -97,8 +97,8 @@ const logger = {
     const timestamp = new Date().toLocaleTimeString();
     const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.green}${colors.bright}[expressTemplatesReload]${colors.reset}`;
     data !== undefined
-      ? console.log(`${prefix}: ${message}`, data)
-      : console.log(`${prefix}: ${message}`);
+      ? console.log(`${prefix} ${message}`, data)
+      : console.log(`${prefix} ${message}`);
   },
 };
 
@@ -127,53 +127,80 @@ export function expressTemplatesReload({
   if (process.env.NODE_ENV === 'production') return;
 
   const quiet = options.quiet || false;
+  const sseClients = new Set<Response>();
 
-  watch.forEach(async ({ path: watchPath, extensions }) => {
+  function notifyClients(changedFile?: string) {
+    if (sseClients.size > 0) {
+      if (!quiet) {
+        logger.info(`Reloading browser (${changedFile || 'file changed'})`);
+      }
+
+      sseClients.forEach((client) => {
+        try {
+          client.write('data: reload\n\n');
+        } catch {
+          sseClients.delete(client);
+        }
+      });
+    }
+  }
+
+  watch.forEach(({ path: watchPath, extensions }) => {
     const isDirectory = fs.statSync(watchPath).isDirectory();
 
     if (isDirectory && !extensions) {
       throw new Error(
-        `[expressTemplatesReload]: Extensions must be provided for directory: ${watchPath}`,
+        `Extensions must be provided for directory: ${watchPath}`,
       );
     }
 
-    try {
-      const watcher = fs.promises.watch(watchPath, { recursive: isDirectory });
+    const shouldProcessFile = (filename: string): boolean => {
+      if (!filename) return false;
+      if (!isDirectory) return true;
+      if (!extensions) return false;
 
-      for await (const event of watcher) {
-        if (!event.filename) continue;
-
-        const fullPath = isDirectory
-          ? path.join(watchPath, event.filename)
-          : watchPath;
-
-        // Only check extensions for directories
-        if (
-          isDirectory &&
-          extensions &&
-          !extensions.some((ext) => event.filename!.endsWith(ext))
-        ) {
-          continue;
-        }
-
-        try {
-          // Check if file exists (it might be deleted)
-          await fs.promises.access(fullPath);
-
-          if (!quiet) logger.info('File changed: %s', event.filename);
-          notifyClients();
-        } catch {
-          // File might be deleted or temporarily unavailable
-          if (!quiet) logger.info('File deleted: %s', event.filename);
-          notifyClients();
-        }
+      if (
+        filename.startsWith('.') ||
+        filename.includes('~') ||
+        filename.includes('.tmp') ||
+        filename.includes('node_modules')
+      ) {
+        return false;
       }
+
+      return extensions.some((ext) => filename.endsWith(ext));
+    };
+
+    try {
+      const watcher = fs.watch(
+        watchPath,
+        { recursive: isDirectory },
+        (eventType, filename) => {
+          if (!filename || !shouldProcessFile(filename)) {
+            return;
+          }
+
+          if (!quiet) {
+            logger.info(`File ${eventType}: ${filename}`);
+          }
+
+          notifyClients(filename);
+        },
+      );
+
+      watcher.on('error', (error) => {
+        if (!quiet) {
+          logger.error(`Watcher error for ${watchPath}: ${error.message}`);
+        }
+      });
     } catch (error) {
-      if (!quiet) logger.error('Error watching path: %s', watchPath);
+      if (!quiet) {
+        logger.error(
+          `Error watching path: ${watchPath} - ${(error as Error).message}`,
+        );
+      }
     }
   });
-
-  const sseClients = new Set<Response>();
 
   app.get('/express-templates-reload', (req: Request, res: Response) => {
     res.writeHead(200, {
@@ -183,47 +210,65 @@ export function expressTemplatesReload({
       'Access-Control-Allow-Origin': '*',
     });
 
-    // Send initial connection event
     res.write('data: connected\n\n');
-
     sseClients.add(res);
+
+    if (!quiet) {
+      logger.info('Browser connected for auto-reload');
+    }
 
     req.on('close', () => {
       sseClients.delete(res);
     });
+
+    req.on('error', () => {
+      sseClients.delete(res);
+    });
   });
 
-  function notifyClients() {
-    sseClients.forEach((client) => {
-      try {
-        client.write('data: reload\n\n');
-      } catch {
-        sseClients.delete(client);
-      }
-    });
-  }
-
   const clientScript = `
-	<script>
-		(function() {
-			function connect() {
-				const eventSource = new EventSource('/express-templates-reload');
+    <script>
+        (function() {
+            let source = null;
+            let reconnectAttempts = 0;
+            const MAX_RECONNECT_ATTEMPTS = 3;
 
-				eventSource.onmessage = function(event) {
-					if (event.data === 'reload') {
-						location.reload();
-					}
-				};
+            function connect() {
+                if (source) source.close();
 
-				eventSource.onerror = function() {
-					console.log('[express-templates-reload] Connection lost, reconnecting...');
-					eventSource.close();
-					setTimeout(connect, 1000);
-				};
-			}
-			connect();
-		})();
-	</script>\n\t`;
+                if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+                    console.log('[express-templates-reload] Max reconnection attempts reached. Stopping auto-reload.');
+                    return;
+                }
+
+                source = new EventSource('/express-templates-reload');
+                console.log('[express-templates-reload] Browser connected for auto-reload');
+
+                source.onmessage = function(event) {
+                    if (event.data === 'reload') {
+                        console.log('[express-templates-reload] Reloading browser');
+                        location.reload();
+                    }
+                };
+
+                source.onerror = function() {
+                    console.log('[express-templates-reload] Connection lost, reconnecting... (attempt ' + (reconnectAttempts + 1) + ' of ' + MAX_RECONNECT_ATTEMPTS + ')');
+                    reconnectAttempts++;
+                    setTimeout(connect, 1000);
+                };
+
+                source.onopen = function() {
+                    reconnectAttempts = 0;
+                };
+            }
+
+            connect();
+
+            window.addEventListener('beforeunload', function() {
+                if (source) source.close();
+            });
+        })();
+    </script>\n\t`;
 
   app.use((_req: Request, res: Response, next: NextFunction) => {
     const originalSend = res.send.bind(res);
@@ -232,7 +277,6 @@ export function expressTemplatesReload({
       if (typeof body === 'string' && body.includes('</head>')) {
         body = body.replace('</head>', clientScript + '</head>');
       }
-
       return originalSend(body);
     };
 
