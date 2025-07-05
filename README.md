@@ -22,7 +22,7 @@ import { expressTemplatesReload } from '@wajeht/express-templates-reload';
 const app = express();
 
 // Must be placed before any other routes
-if (process.env.NODE_ENV !== 'production')
+if (process.env.NODE_ENV === 'development') {
   expressTemplatesReload({
     app,
     watch: [
