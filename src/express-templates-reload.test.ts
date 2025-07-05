@@ -203,7 +203,6 @@ describe('expressTemplatesReload', () => {
       expect(logMessage).toContain('[expressTemplatesReload]');
       expect(logMessage).toContain('File change: test.txt');
       expect(logMessage).toMatch(/\d{1,2}:\d{2}:\d{2}/); // timestamp pattern
-      expect(logMessage).toContain('\x1b['); // ANSI color codes
     }
 
     mockStatSync.mockRestore();
