@@ -1,27 +1,8 @@
 import fs from 'node:fs';
-import path from 'node:path';
+import { styleText } from 'node:util';
 import type { Application, NextFunction, Response, Request } from 'express';
 
 /**
- *
- * ANSI color codes for terminal output
- *
- */
-const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  dim: '\x1b[2m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-} as const;
-
-/**
- *
  * Colored logger object for better console output visibility
  *
  * @type {Object}
@@ -44,10 +25,10 @@ const logger = {
    */
   info: (message: string, data?: any): void => {
     const timestamp = new Date().toLocaleTimeString();
-    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.cyan}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    const prefix = `${timestamp} ${styleText('cyan', '[expressTemplatesReload]')}`;
     data !== undefined
-      ? console.info(`${prefix} ${message}`, data)
-      : console.info(`${prefix} ${message}`);
+      ? process.stdout.write(`${prefix} ${message} ${data}\n`)
+      : process.stdout.write(`${prefix} ${message}\n`);
   },
 
   /**
@@ -61,10 +42,10 @@ const logger = {
    */
   warn: (message: string, data?: any): void => {
     const timestamp = new Date().toLocaleTimeString();
-    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.yellow}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    const prefix = `${timestamp} ${styleText('yellow', '[expressTemplatesReload]')}`;
     data !== undefined
-      ? console.warn(`${prefix} ${message}`, data)
-      : console.warn(`${prefix} ${message}`);
+      ? process.stdout.write(`${prefix} ${message} ${data}\n`)
+      : process.stdout.write(`${prefix} ${message}\n`);
   },
 
   /**
@@ -78,10 +59,10 @@ const logger = {
    */
   error: (message: string, data?: any): void => {
     const timestamp = new Date().toLocaleTimeString();
-    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.red}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    const prefix = `${timestamp} ${styleText('red', '[expressTemplatesReload]')}`;
     data !== undefined
-      ? console.error(`${prefix} ${message}`, data)
-      : console.error(`${prefix} ${message}`);
+      ? process.stderr.write(`${prefix} ${message} ${data}\n`)
+      : process.stderr.write(`${prefix} ${message}\n`);
   },
 
   /**
@@ -95,10 +76,10 @@ const logger = {
    */
   success: (message: string, data?: any): void => {
     const timestamp = new Date().toLocaleTimeString();
-    const prefix = `${colors.dim}${timestamp}${colors.reset} ${colors.green}${colors.bright}[expressTemplatesReload]${colors.reset}`;
+    const prefix = `${timestamp} ${styleText('green', '[expressTemplatesReload]')}`;
     data !== undefined
-      ? console.log(`${prefix} ${message}`, data)
-      : console.log(`${prefix} ${message}`);
+      ? process.stdout.write(`${prefix} ${message} ${data}\n`)
+      : process.stdout.write(`${prefix} ${message}\n`);
   },
 };
 

@@ -16,11 +16,11 @@ describe('expressTemplatesReload', () => {
   it('should not initialize in production environment', () => {
     process.env.NODE_ENV = 'production';
 
-    const consoleSpy = vi.spyOn(console, 'info');
+    const stdoutSpy = vi.spyOn(process.stdout, 'write');
 
     expressTemplatesReload({ app, watch: [{ path: './test' }] });
 
-    expect(consoleSpy).not.toHaveBeenCalled();
+    expect(stdoutSpy).not.toHaveBeenCalled();
   });
 
   it('should create SSE endpoint with correct headers', async () => {
@@ -130,7 +130,7 @@ describe('expressTemplatesReload', () => {
   it('should accept quiet option', () => {
     const mockStatSync = vi.spyOn(require('fs'), 'statSync');
     const mockWatch = vi.spyOn(require('fs'), 'watch');
-    const consoleSpy = vi.spyOn(console, 'info');
+    const stdoutSpy = vi.spyOn(process.stdout, 'write');
 
     mockStatSync.mockReturnValue({ isDirectory: () => false });
     mockWatch.mockReturnValue({
@@ -143,7 +143,7 @@ describe('expressTemplatesReload', () => {
       options: { quiet: true },
     });
 
-    expect(consoleSpy).not.toHaveBeenCalled();
+    expect(stdoutSpy).not.toHaveBeenCalled();
 
     mockStatSync.mockRestore();
     mockWatch.mockRestore();
@@ -179,7 +179,7 @@ describe('expressTemplatesReload', () => {
   it('should log with colored output and timestamps', async () => {
     const mockStatSync = vi.spyOn(require('fs'), 'statSync');
     const mockWatch = vi.spyOn(require('fs'), 'watch');
-    const consoleInfoSpy = vi.spyOn(console, 'info');
+    const stdoutSpy = vi.spyOn(process.stdout, 'write');
 
     mockStatSync.mockReturnValue({ isDirectory: () => false });
 
@@ -196,8 +196,8 @@ describe('expressTemplatesReload', () => {
     expect(watchCallback).toBeDefined();
     watchCallback!('change', 'test.txt');
 
-    expect(consoleInfoSpy).toHaveBeenCalled();
-    const logCall = consoleInfoSpy.mock.calls[0];
+    expect(stdoutSpy).toHaveBeenCalled();
+    const logCall = stdoutSpy.mock.calls[0];
     if (logCall && logCall.length > 0) {
       const logMessage = logCall[0] as string;
       expect(logMessage).toContain('[expressTemplatesReload]');
