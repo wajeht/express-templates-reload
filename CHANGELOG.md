@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 2.0.3
+
+### Patch Changes
+
+- 8e17bde: feat: refactor logger to use node utils
+
 ## 2.0.2
 
 ### Patch Changes
