@@ -1,5 +1,11 @@
 # @wajeht/express-templates-reload
 
+## 2.0.5
+
+### Patch Changes
+
+- d8cb679: chore(deps): update and upgrades
+
 ## 2.0.4
 
 ### Patch Changes
