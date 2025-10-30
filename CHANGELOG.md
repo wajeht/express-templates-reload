@@ -1,5 +1,12 @@
 # @wajeht/express-templates-reload
 
+## 2.0.4
+
+### Patch Changes
+
+- 5c6d9c0: chore(deps): update and upgrade packages
+- b25f0fb: chore(deps): update and upgrade packages
+
 ## 2.0.3
 
 ### Patch Changes
