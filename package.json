@@ -37,6 +37,8 @@
     "format": "prettier --write .",
     "prepublishOnly": "npm run ci",
     "changeset": " npx changeset",
+    "update:deps": "npx npm-check -u",
+    "check:deps": "npx depcheck",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack .",
     "local-release": "npm run ci && changeset version && changeset publish"
