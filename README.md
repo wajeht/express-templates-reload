@@ -1,4 +1,4 @@
-# 🔄 express-templates-reload
+# express-templates-reload
 
 [![Node.js CI](https://github.com/wajeht/express-templates-reload/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wajeht/express-templates-reload/actions/workflows/ci.yml)
 ![npm](https://img.shields.io/npm/dw/%40wajeht%2Fexpress-templates-reload)
@@ -13,7 +13,7 @@ automatically reload the browser for template and public asset changes in an exp
 $ npm install @wajeht/express-templates-reload --save-dev
 ```
 
-## 💻 Usage
+## Usage
 
 ```ts
 import express from 'express';
@@ -49,7 +49,7 @@ app.get('/', (req, res) => res.send('Hello, world!'));
 app.listen(80, () => console.log('App is listening on http://localhost'));
 ```
 
-## 🛠️ API Reference
+## API Reference
 
 ### expressTemplatesReload(config)
 
@@ -63,11 +63,11 @@ app.listen(80, () => console.log('App is listening on http://localhost'));
 | `watch[].extensions` | `string[]`    | File extensions to watch (required for directories) |
 | `options.quiet`      | `boolean`     | Suppress console logs (default: false)              |
 
-## 📑 Docs
+## Docs
 
 - See [DEVELOPMENT](./docs/development.md) for `development` guide.
 - See [CONTRIBUTION](./docs/contribution.md) for `contribution` guide.
 
-## 📜 License
+## License
 
 Distributed under the MIT License © [wajeht](https://github.com/wajeht). See [LICENSE](./LICENSE) for more information.
