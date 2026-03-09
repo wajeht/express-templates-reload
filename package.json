@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.2",
-    "@changesets/cli": "2.29.8",
+    "@changesets/cli": "2.30.0",
     "@types/express": "5.0.6",
     "@types/supertest": "6.0.3",
     "express": "5.2.1",
