@@ -1,18 +1,18 @@
 {
   "name": "hello-world",
   "version": "1.0.0",
-  "main": "./dist/app.js",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch --no-warnings --clear-screen=false ./app.ts"
-  },
+  "description": "hello world",
   "keywords": [
     "hello",
     "world"
   ],
-  "author": "wajeht",
   "license": "MIT",
-  "description": "hello world",
+  "author": "wajeht",
+  "type": "module",
+  "main": "./dist/app.js",
+  "scripts": {
+    "dev": "tsx watch --include ../../src/**/*.ts --no-warnings --clear-screen=false ./app.ts"
+  },
   "dependencies": {
     "express": "^4.21.2"
   },

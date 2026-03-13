@@ -1,5 +1,42 @@
 # @wajeht/express-templates-reload
 
+## 3.0.0
+
+### Major Changes
+
+- **BREAKING**: Replaced SSE with WebSocket for browser reload communication
+- **BREAKING**: Added `ws` as a runtime dependency
+- **BREAKING**: New optional `server` parameter for apps using `http.createServer(app)` directly
+- **BREAKING**: New `clientQuiet` option to silence client-side console logs
+
+### Features
+
+- WebSocket-based reload via `ws` library with `noServer: true` mode
+- Auto-captures server from `app.listen()` — no config needed for most setups
+- Optional explicit `server` param for `http.createServer(app)` usage
+- `dispose()` handle for cleanup of watchers, WebSocket clients, and patched methods
+- Extracted client script into `src/client-script.ts` with deduplication via marker attribute
+- Extracted logger into `src/logger.ts`
+
+### Internal
+
+- Migrated from tsup to vite-plus (`vp pack`)
+- Migrated from prettier/eslint to vite-plus (`vp check`)
+- Replaced changesets with manual `release.sh`
+- Rewrote test suite with 13 tests covering WebSocket e2e
+
+### Migration Guide
+
+```js
+// Before (v2.x) — no changes needed if using app.listen()
+expressTemplatesReload({ app, watch: [{ path: './views' }] });
+
+// If using http.createServer(app), pass server explicitly:
+import http from 'node:http';
+const server = http.createServer(app);
+expressTemplatesReload({ app, server, watch: [{ path: './views' }] });
+```
+
 ## 2.0.5
 
 ### Patch Changes

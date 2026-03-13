@@ -4,8 +4,8 @@
   "description": "automatically reload the browser for template and public asset changes in an express app",
   "keywords": [
     "express",
-    "templates",
-    "reload"
+    "reload",
+    "templates"
   ],
   "homepage": "https://github.com/wajeht/express-templates-reload",
   "bugs": {
@@ -21,38 +21,44 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "default": "./dist/index.cjs"
     }
   },
   "scripts": {
-    "build": "tsup",
-    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
-    "lint": "tsc",
-    "test": "vitest run",
-    "format": "prettier --write .",
+    "build": "vp pack",
+    "ci": "vp pack && vp check && attw --pack . && vp test run",
+    "test": "vp test run",
+    "check": "vp check",
+    "lint": "vp check",
+    "format": "vp check --fix",
     "prepublishOnly": "npm run ci",
-    "changeset": " npx changeset",
-    "update:deps": "npx npm-check -u",
-    "check:deps": "npx depcheck",
-    "check-format": "prettier --check .",
+    "release": "./release.sh",
     "check-exports": "attw --pack .",
-    "local-release": "npm run ci && changeset version && changeset publish"
+    "prepare": "vp config"
+  },
+  "dependencies": {
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.2",
-    "@changesets/cli": "2.30.0",
     "@types/express": "5.0.6",
     "@types/supertest": "7.2.0",
+    "@types/ws": "^8.18.1",
     "express": "5.2.1",
-    "prettier": "3.8.1",
     "supertest": "7.2.2",
-    "tsup": "8.5.1",
-    "typescript": "5.9.3",
-    "vitest": "4.0.18"
-  }
+    "typescript": "^5.9.3",
+    "vite-plus": "latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "packageManager": "npm@11.11.1"
 }
