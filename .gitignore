@@ -2,3 +2,5 @@ node_modules
 dist
 .vscode
 .claude
+.vite-hooks
+AGENTS.md
